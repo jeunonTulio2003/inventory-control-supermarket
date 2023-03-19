@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/product")
 public class ProductController {
-
     @Autowired
     private ProductService productService;
 
@@ -49,6 +48,4 @@ public class ProductController {
         }
         return ResponseEntity.ok().body(productUpdate);
     }
-
-
 }
