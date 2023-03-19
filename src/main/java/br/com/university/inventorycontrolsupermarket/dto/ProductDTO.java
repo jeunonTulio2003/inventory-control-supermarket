@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ProductDTO {
-    private String id;
-    private String nameProduct;
-    private String brand;
-    private LocalDateTime createdAt;
-    private int quantity;
+        private String id;
+        private String nameProduct;
+        private String brand;
+        private LocalDateTime createdAt;
+        private int quantity;
+        private String price;
 }

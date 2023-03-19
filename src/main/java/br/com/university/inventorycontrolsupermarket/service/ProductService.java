@@ -1,8 +1,16 @@
 package br.com.university.inventorycontrolsupermarket.service;
 
 import br.com.university.inventorycontrolsupermarket.dto.ProductDTO;
+import br.com.university.inventorycontrolsupermarket.model.Product;
+
+import java.util.List;
 
 public interface ProductService {
 
-    public boolean saveProduct(ProductDTO productDTO);
+    boolean saveProduct(ProductDTO productDTO);
+    List<Product> findAllProducts();
+
+    boolean deleteProduct(String id);
+
+    Product updateProduct(Product product);
 }

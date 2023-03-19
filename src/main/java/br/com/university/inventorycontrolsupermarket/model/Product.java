@@ -20,4 +20,5 @@ public class Product {
     private String brand;
     private LocalDateTime createdAt;
     private int quantity;
+    private String price;
 }
