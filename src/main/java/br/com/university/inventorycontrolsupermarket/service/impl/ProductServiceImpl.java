@@ -5,7 +5,6 @@ import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.repository.ProductRepository;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import javax.management.Query;
