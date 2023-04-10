@@ -13,4 +13,8 @@ public interface ProductService {
     boolean deleteProduct(String id);
 
     Product updateProduct(Product product);
+
+    List<Product> findProductByArea(String area);
+
+
 }

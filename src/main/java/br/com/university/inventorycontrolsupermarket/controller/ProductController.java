@@ -27,7 +27,7 @@ public class ProductController {
     public ResponseEntity<List<Product>> findAllProducts() {
         List<Product> productList = productService.findAllProducts();
         if (productList.isEmpty()) {
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(productList);
     }
@@ -47,5 +47,14 @@ public class ProductController {
             return ResponseEntity.unprocessableEntity().build();
         }
         return ResponseEntity.ok().body(productUpdate);
+    }
+
+    @GetMapping(value = "/area/{area}")
+    public ResponseEntity<List<Product>> findProductByArea(@PathVariable("area") String area){
+        List<Product> list = productService.findProductByArea(area);
+        if(list.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(list);
     }
 }

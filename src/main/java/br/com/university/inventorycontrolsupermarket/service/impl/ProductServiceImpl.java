@@ -1,13 +1,13 @@
 package br.com.university.inventorycontrolsupermarket.service.impl;
 
 import br.com.university.inventorycontrolsupermarket.dto.ProductDTO;
+import br.com.university.inventorycontrolsupermarket.enums.InventoryAreaEnum;
 import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.repository.ProductRepository;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.management.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +19,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean saveProduct(ProductDTO productDTO) {
 
+        InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(productDTO.getArea());
+
+        if(areaEnum == null){
+            throw new IllegalArgumentException();
+        }
+
         Product product =
                 Product.builder()
                         .nameProduct(productDTO.getNameProduct())
@@ -26,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
                         .createdAt(LocalDateTime.now())
                         .quantity(productDTO.getQuantity())
                         .price(productDTO.getPrice())
+                        .inventoryAreaEnum(areaEnum)
                         .build();
 
         productRepository.save(product);
@@ -38,8 +45,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean deleteProduct(String id) {
         Optional<Product> product = productRepository.findById(id);
-
-        //Optional.ofNullable(productRepository.findById(id)).orElseThrow(() -> new RuntimeException());
 
         if(product.isPresent()){
             productRepository.deleteById(id);
@@ -57,5 +62,18 @@ public class ProductServiceImpl implements ProductService {
             return productUpdate;
         }
         return null;
+    }
+
+    @Override
+    public List<Product> findProductByArea(String area) {
+        InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(area);
+
+        if(areaEnum == null){
+            throw new IllegalArgumentException();
+        }
+
+        List<Product> list = productRepository.findProduct(areaEnum);
+
+        return list;
     }
 }
