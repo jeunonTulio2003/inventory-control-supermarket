@@ -12,4 +12,6 @@ import java.util.List;
 public interface ProductRepository extends MongoRepository<Product, String> {
     @Query("{ 'inventoryAreaEnum':  ?0}")
     List<Product> findProduct(InventoryAreaEnum area);
+
+    List<Product> findProductByBrand(String brand);
 }

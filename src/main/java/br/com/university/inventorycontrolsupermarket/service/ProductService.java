@@ -16,5 +16,7 @@ public interface ProductService {
 
     List<Product> findProductByArea(String area);
 
+    List<Product> findProductByBrand(String brand);
+
 
 }

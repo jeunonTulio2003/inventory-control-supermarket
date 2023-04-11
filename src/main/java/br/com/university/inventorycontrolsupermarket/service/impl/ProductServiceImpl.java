@@ -70,6 +70,13 @@ public class ProductServiceImpl implements ProductService {
         return list;
     }
 
+    @Override
+    public List<Product> findProductByBrand(String brand) {
+        List<Product> list = productRepository.findProductByBrand(brand);
+
+        return list;
+    }
+
     private InventoryAreaEnum validateArea(String area){
         InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(area);
 

@@ -57,4 +57,13 @@ public class ProductController {
         }
         return ResponseEntity.ok().body(list);
     }
+
+    @GetMapping(value = "/brand/{brand}")
+    public ResponseEntity<List<Product>> findProductByBrand(@PathVariable("brand") String brand){
+        List<Product> list = productService.findProductByBrand(brand);
+        if(list.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(list);
+    }
 }
