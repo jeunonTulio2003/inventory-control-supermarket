@@ -2,6 +2,7 @@ package br.com.university.inventorycontrolsupermarket.service.impl;
 
 import br.com.university.inventorycontrolsupermarket.dto.ProductDTO;
 import br.com.university.inventorycontrolsupermarket.enums.InventoryAreaEnum;
+import br.com.university.inventorycontrolsupermarket.exception.AreaNotFoundException;
 import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.repository.ProductRepository;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
@@ -19,11 +20,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean saveProduct(ProductDTO productDTO) {
 
-        InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(productDTO.getArea());
-
-        if(areaEnum == null){
-            throw new IllegalArgumentException();
-        }
+        InventoryAreaEnum areaEnum = validateArea(productDTO.getArea());
 
         Product product =
                 Product.builder()
@@ -66,14 +63,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findProductByArea(String area) {
-        InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(area);
-
-        if(areaEnum == null){
-            throw new IllegalArgumentException();
-        }
+        InventoryAreaEnum areaEnum = validateArea(area);
 
         List<Product> list = productRepository.findProduct(areaEnum);
 
         return list;
+    }
+
+    private InventoryAreaEnum validateArea(String area){
+        InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(area);
+
+        if(areaEnum == null){
+            throw new AreaNotFoundException("Area not found");
+        }
+        return areaEnum;
     }
 }

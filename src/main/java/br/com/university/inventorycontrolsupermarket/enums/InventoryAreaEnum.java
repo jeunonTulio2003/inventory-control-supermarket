@@ -16,7 +16,7 @@ public enum InventoryAreaEnum {
     CANDY("5", "Candy"),
     COFFEE_SHOP("6", "Coffee Shop"),
     CLEANING_PRODUCTS("7", "Cleaning products"),
-    PERSON_CARES("8", "Pesonal Cares"),
+    PERSON_CARES("8", "Personal Cares"),
     TOY("9", "Toy");
 
     private String id;
