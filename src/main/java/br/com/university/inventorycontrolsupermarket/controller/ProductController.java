@@ -5,6 +5,7 @@ import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping(value = "/save")
-    public ResponseEntity<String> saveProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<String> saveProduct(@RequestBody @Validated ProductDTO productDTO) {
         if (productService.saveProduct(productDTO)) {
             return ResponseEntity.ok().body("Salvo com sucesso");
         }
@@ -24,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<Product>> findAllProducts() {
-        List<Product> productList = productService.findAllProducts();
+    public ResponseEntity<List<Product>> findAllProducts(@RequestParam(required = false, defaultValue = "All")String filter) {
+        List<Product> productList = productService.findAllProducts(filter);
         if (productList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

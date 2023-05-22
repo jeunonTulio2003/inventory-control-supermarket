@@ -6,12 +6,16 @@ import br.com.university.inventorycontrolsupermarket.exception.AreaNotFoundExcep
 import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.repository.ProductRepository;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
+import org.apache.catalina.core.AprLifecycleListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static br.com.university.inventorycontrolsupermarket.constantes.Constantes.ALL;
+import static br.com.university.inventorycontrolsupermarket.constantes.Constantes.FILTER;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -36,8 +40,23 @@ public class ProductServiceImpl implements ProductService {
         return true;
     }
     @Override
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
+    public List<Product> findAllProducts(String filter) {
+
+
+        List<Product> results = validateFilter(filter);
+        return  results;
+    }
+
+    private List<Product> validateFilter(String filter){
+        if(filter.equalsIgnoreCase(ALL)){
+            return productRepository.findAll();
+        }
+        if(filter.equalsIgnoreCase(FILTER)){
+            return productRepository.findProductByQuantityThanZero(0);
+        }
+        else {
+            throw new AreaNotFoundException("Filter invalid");
+        }
     }
     @Override
     public boolean deleteProduct(String id) {
@@ -55,6 +74,8 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> product = productRepository.findById(productUpdate.getId());
 
         if(product.isPresent()){
+            productUpdate.setCreatedAt(product.get().getCreatedAt());
+            productUpdate.setInventoryAreaEnum(product.get().getInventoryAreaEnum());
             productRepository.save(productUpdate);
             return productUpdate;
         }

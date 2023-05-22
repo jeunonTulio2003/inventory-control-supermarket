@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProductService {
 
     boolean saveProduct(ProductDTO productDTO);
-    List<Product> findAllProducts();
+    List<Product> findAllProducts(String filter);
 
     boolean deleteProduct(String id);
 
