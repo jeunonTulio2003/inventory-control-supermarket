@@ -2,11 +2,10 @@ package br.com.university.inventorycontrolsupermarket.service.impl;
 
 import br.com.university.inventorycontrolsupermarket.dto.ProductDTO;
 import br.com.university.inventorycontrolsupermarket.enums.InventoryAreaEnum;
-import br.com.university.inventorycontrolsupermarket.exception.AreaNotFoundException;
+import br.com.university.inventorycontrolsupermarket.exception.UnprocessableEntityException;
 import br.com.university.inventorycontrolsupermarket.model.Product;
 import br.com.university.inventorycontrolsupermarket.repository.ProductRepository;
 import br.com.university.inventorycontrolsupermarket.service.ProductService;
-import org.apache.catalina.core.AprLifecycleListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static br.com.university.inventorycontrolsupermarket.constantes.Constantes.ALL;
-import static br.com.university.inventorycontrolsupermarket.constantes.Constantes.FILTER;
+import static br.com.university.inventorycontrolsupermarket.constantes.Constantes.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -25,6 +23,10 @@ public class ProductServiceImpl implements ProductService {
     public boolean saveProduct(ProductDTO productDTO) {
 
         InventoryAreaEnum areaEnum = validateArea(productDTO.getArea());
+
+        validateQuantity(productDTO.getQuantity());
+
+        validateProduct(productDTO.getNameProduct());
 
         Product product =
                 Product.builder()
@@ -40,22 +42,16 @@ public class ProductServiceImpl implements ProductService {
         return true;
     }
     @Override
-    public List<Product> findAllProducts(String filter) {
+    public List<Product> findAllProducts(List<Integer> filter) {
 
-
-        List<Product> results = validateFilter(filter);
-        return  results;
+        return productRepository.findProductBetween(filter.get(0), filter.get(1));
     }
 
-    private List<Product> validateFilter(String filter){
-        if(filter.equalsIgnoreCase(ALL)){
-            return productRepository.findAll();
-        }
-        if(filter.equalsIgnoreCase(FILTER)){
-            return productRepository.findProductByQuantityThanZero(0);
-        }
-        else {
-            throw new AreaNotFoundException("Filter invalid");
+    private void validateProduct(String name) {
+        Optional<Product> product = productRepository.findByNameProduct(name);
+
+        if(product.isPresent()){
+            throw new UnprocessableEntityException("Product already exists");
         }
     }
     @Override
@@ -73,13 +69,24 @@ public class ProductServiceImpl implements ProductService {
     public Product updateProduct(Product productUpdate) {
         Optional<Product> product = productRepository.findById(productUpdate.getId());
 
-        if(product.isPresent()){
-            productUpdate.setCreatedAt(product.get().getCreatedAt());
-            productUpdate.setInventoryAreaEnum(product.get().getInventoryAreaEnum());
-            productRepository.save(productUpdate);
-            return productUpdate;
+        if(!product.isPresent() || product.isEmpty()){
+            throw new UnprocessableEntityException("Cannot possible find product");
         }
-        return null;
+
+        if(!product.get().getNameProduct().equalsIgnoreCase(productUpdate.getNameProduct())){
+
+            validateProduct(productUpdate.getNameProduct());
+
+        }
+
+        validateQuantity(productUpdate.getQuantity());
+
+        productUpdate.setCreatedAt(product.get().getCreatedAt());
+        productUpdate.setInventoryAreaEnum(product.get().getInventoryAreaEnum());
+
+        productRepository.save(productUpdate);
+
+        return productUpdate;
     }
 
     @Override
@@ -98,11 +105,18 @@ public class ProductServiceImpl implements ProductService {
         return list;
     }
 
-    private InventoryAreaEnum validateArea(String area){
+    private static void validateQuantity(int quantity){
+        if(quantity > MAX_QUANTITY){
+            throw new UnprocessableEntityException("Quantity cannot be greater than 50");
+        }
+
+    }
+
+    private static InventoryAreaEnum validateArea(String area){
         InventoryAreaEnum areaEnum = InventoryAreaEnum.fromDescription(area);
 
         if(areaEnum == null){
-            throw new AreaNotFoundException("Area not found");
+            throw new UnprocessableEntityException("Area not found");
         }
         return areaEnum;
     }

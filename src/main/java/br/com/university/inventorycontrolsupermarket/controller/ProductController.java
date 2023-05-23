@@ -24,8 +24,8 @@ public class ProductController {
         return ResponseEntity.unprocessableEntity().build();
     }
 
-    @GetMapping(value = "/all")
-    public ResponseEntity<List<Product>> findAllProducts(@RequestParam(required = false, defaultValue = "All")String filter) {
+    @GetMapping(value = "")
+    public ResponseEntity<List<Product>> findAllProducts(@RequestParam(required = false, defaultValue = "All")List<Integer> filter) {
         List<Product> productList = productService.findAllProducts(filter);
         if (productList.isEmpty()) {
             return ResponseEntity.noContent().build();
